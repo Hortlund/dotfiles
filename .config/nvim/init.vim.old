@@ -1,0 +1,132 @@
+set rtp+=/opt/homebrew/opt/fzf
+
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+au BufRead,BufNewFile /Users/andreas.hortlund/Documents/git/air8/* setlocal fileencodings=iso-8859-1
+
+au BufNewFile,BufRead *.tt set filetype=tt2html
+
+let g:tokyonight_style = "night"
+let g:tokyonight_italic_functions = 1
+
+colorscheme tokyonight
+
+let g:lightline = {
+      \ 'colorscheme': 'tokyonight',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'absolutepath', 'modified', 'publish' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'gitbranch#name'
+      \ },
+	  \ 'component': {
+	  \	  'publish': 'Publish to ' . $ASKAS_BUTIK
+	  \ },
+      \ }
+
+"set textwidth=0
+
+"set tags=~/Documents/git/air8
+
+" Set some nice character listings, then activate list
+set list
+set listchars=tab:⟶\ ,trail:~,extends:>,precedes:<,nbsp:%
+set lcs+=space:·
+
+set number
+
+" Simple re-format for minified Javascript
+command! UnMinify call UnMinify()
+function! UnMinify()
+    %s/{\ze[^\r\n]/{\r/g
+    %s/){/) {/g
+    %s/};\?\ze[^\r\n]/\0\r/g
+    %s/;\ze[^\r\n]/;\r/g
+    %s/[^\s]\zs[=&|]\+\ze[^\s]/ \0 /g
+    normal ggVG=
+endfunction
+
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+:  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+:augroup END
+
+set wrap 
+
+set linebreak 
+
+"set nolist
+
+set splitright
+
+set splitbelow
+
+set confirm
+
+set nohidden
+
+" Report every change
+set report=0
+
+" Show cursor position and location in file
+set ruler
+
+" Don't show the stupid informational message on startup
+set shortmess=I
+
+" Show partial commands in status line
+set showcmd
+
+" Highlight matching parens, brackets, etc. (like emacs)
+set showmatch
+
+" If you're in insert mode, say so.
+set showmode
+
+hi CursorLine cterm=reverse
+com! LINE :exe 'se cul'
+au CursorMoved * :se nocul
+au CursorMovedI * :se nocul
+noremap n nzz:LINE<CR>
+noremap N Nzz:LINE<CR>
+noremap * *zz:LINE<CR>
+noremap # #zz:LINE<CR>
+
+set nocompatible        " Use Vim settings, rather than Vi settings
+set softtabstop=2       " Indent by 2 spaces when hitting tab
+set shiftwidth=4        " Indent by 4 spaces when auto-indenting
+set tabstop=4           " Show existing tab with 4 spaces width
+filetype plugin indent on
+syntax on               " Enable syntax highlighting
+"filetype indent on      " Enable indenting for files
+set autoindent          " Enable auto indenting
+set number              " Enable line numbers
+set nobackup            " Disable backup files
+set laststatus=2        "show status line
+"set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
+set wildmenu            " Display command line's tab complete options as a menu.
+set noshowmode
+
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+endif
+
+noremap <Leader>y "*y
+noremap <Leader>p "*p
+noremap <Leader>Y "+y
+noremap <Leader>P "+p
+
+nnoremap <Leader>b :! perl /Users/andreas.hortlund/Documents/git/air8/_VERKTYG/publish.pm %:p 1<CR>
+nnoremap <C-f> :Rg <CR>
+nnoremap <C-p> :Files <CR>
+nnoremap <C-g> :Commits <CR>
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+
+":command Blame ctrl-w n ctrl-w L 0 r !git blame #
+
+":command Ftp :e ftp://andreas.hortlund@79.99.5.181/
